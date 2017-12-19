@@ -2,8 +2,13 @@ from collections import defaultdict
 import cPickle
 import os
 
-import jieba
+#import jieba
+# REPLACE JEIBA TO PYNLPIR
+import pynlpir
 from base import *
+def seg2generative(segresult):
+	for each in segresult:
+		yield each
 
 __all__ = ['GroceryTextConverter']
 
@@ -30,7 +35,10 @@ class GroceryTextPreProcessor(object):
 
     @staticmethod
     def _default_tokenize(text):
-        return jieba.cut(text.strip(), cut_all=True)
+        #return jieba.cut(text.strip(), cut_all=True)
+        pynlpir.open()
+        seg=pynlpir.segment(text.strip(),pos_tagging=False)
+        return seg2generative(seg)
 
     def preprocess(self, text, custom_tokenize):
         if custom_tokenize is not None:
@@ -157,7 +165,7 @@ class GroceryTextConverter(object):
                     continue
                 feat, label = self.to_svm(text, label)
                 w.write('%s %s\n' % (label, ''.join(' {0}:{1}'.format(f, feat[f]) for f in sorted(feat))))
-
+	    pynlpir.close()#free up allocated memory
     def save(self, dest_dir):
         config = {
             'text_prep': 'text_prep.config.pickle',
