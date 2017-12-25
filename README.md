@@ -57,12 +57,7 @@ education
 
 More examples: [sample/](sample/)
 
-Install
--------
 
-    $ pip install tgrocery
-
-> Only test under Unix-based System
 
 
 Specification
